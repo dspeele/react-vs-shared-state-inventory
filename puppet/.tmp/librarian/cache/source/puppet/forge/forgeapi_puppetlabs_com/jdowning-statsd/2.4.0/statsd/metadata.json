@@ -1,0 +1,74 @@
+{
+  "name": "jdowning-statsd",
+  "version": "2.4.0",
+  "author": "Justin Downing",
+  "summary": "Setup and manage statsd",
+  "license": "Apache-2.0",
+  "source": "https://github.com/justindowning/puppet-statsd.git",
+  "project_page": "https://github.com/justindowning/puppet-statsd",
+  "issues_url": "https://github.com/justindowning/puppet-statsd/issues",
+  "description": "Setup and manage statsd",
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "OracleLinux",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Scientific",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "10.04",
+        "12.04",
+        "14.04"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": "3.x"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": "3.x"
+    }
+  ],
+  "dependencies": [
+    {"name":"puppetlabs/stdlib","version_requirement":">=4.1.0 <5.0.0"},
+    {"name":"stahnma/epel","version_requirement":">1.0.0 <2.0.0"}
+  ]
+}
