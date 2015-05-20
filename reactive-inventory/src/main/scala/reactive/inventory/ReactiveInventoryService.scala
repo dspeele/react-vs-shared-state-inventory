@@ -59,6 +59,11 @@ object ReactiveInventoryService extends App with Router {
           }
         }
       }
+    } ~
+    {
+      complete {
+        Json.stringify(Json.toJson(InventoryResponseModel(0, "", "", false, 0, "404- Route unknown")))
+      }
     }
 
   //Create server binding listening on specified interface and port and bind/handle via route object

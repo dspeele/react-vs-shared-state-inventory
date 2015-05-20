@@ -29,9 +29,9 @@ class   InventoryManagerSpec extends
       val document = BSONDocument("sku" -> 1, "count" -> 5)
       Await.result(collection.save(document), 5 seconds)
       inventoryManager ! SetSkuAndQuantity("1", 5)
-      expectMsg(InventoryResponseModel("set inventory", "1", true, 5, ""))
-      inventoryManager ! GetInventory()
-      expectMsg(InventoryResponseModel("get inventory", "1", true, 5, ""))
+      expectMsg(InventoryResponseModel(0, "set inventory", "1", true, 5, ""))
+      inventoryManager ! GetInventory(1)
+      expectMsg(InventoryResponseModel(1, "get inventory", "1", true, 5, ""))
     }
 
     "remove inventory for Sku when purchased" in {
@@ -39,9 +39,9 @@ class   InventoryManagerSpec extends
       val document = BSONDocument("sku" -> 1, "count" -> 5)
       Await.result(collection.save(document), 5 seconds)
       inventoryManager ! SetSkuAndQuantity("1", 5)
-      expectMsg(InventoryResponseModel("set inventory", "1", true, 5, ""))
-      inventoryManager ! UpdateInventory(-3)
-      expectMsg(InventoryResponseModel("buy inventory", "1", true, 3, ""))
+      expectMsg(InventoryResponseModel(0, "set inventory", "1", true, 5, ""))
+      inventoryManager ! UpdateInventory(1, -3)
+      expectMsg(InventoryResponseModel(1, "buy inventory", "1", true, 3, ""))
     }
 
     "return appropriate failure message for Sku when too many purchased" in {
@@ -49,9 +49,9 @@ class   InventoryManagerSpec extends
       val document = BSONDocument("sku" -> 1, "count" -> 5)
       Await.result(collection.save(document), 5 seconds)
       inventoryManager ! SetSkuAndQuantity("1", 5)
-      expectMsg(InventoryResponseModel("set inventory", "1", true, 5, ""))
-      inventoryManager ! UpdateInventory(-6)
-      expectMsg(InventoryResponseModel("buy inventory", "1", false, 6, "Only 5 left"))
+      expectMsg(InventoryResponseModel(0, "set inventory", "1", true, 5, ""))
+      inventoryManager ! UpdateInventory(1, -6)
+      expectMsg(InventoryResponseModel(1, "buy inventory", "1", false, 6, "Only 5 left"))
     }
 
     "add inventory for Sku" in {
@@ -59,9 +59,9 @@ class   InventoryManagerSpec extends
       val document = BSONDocument("sku" -> 1, "count" -> 5)
       Await.result(collection.save(document), 5 seconds)
       inventoryManager ! SetSkuAndQuantity("1", 5)
-      expectMsg(InventoryResponseModel("set inventory", "1", true, 5, ""))
-      inventoryManager ! UpdateInventory(2)
-      expectMsg(InventoryResponseModel("add inventory", "1", true, 2, ""))
+      expectMsg(InventoryResponseModel(0, "set inventory", "1", true, 5, ""))
+      inventoryManager ! UpdateInventory(1, 2)
+      expectMsg(InventoryResponseModel(1, "add inventory", "1", true, 2, ""))
     }
 
     "removing inventory for Sku should decrement inventory" in {
@@ -69,11 +69,11 @@ class   InventoryManagerSpec extends
       val document = BSONDocument("sku" -> 1, "count" -> 5)
       Await.result(collection.save(document), 5 seconds)
       inventoryManager ! SetSkuAndQuantity("1", 5)
-      expectMsg(InventoryResponseModel("set inventory", "1", true, 5, ""))
-      inventoryManager ! UpdateInventory(-3)
-      expectMsg(InventoryResponseModel("buy inventory", "1", true, 3, ""))
-      inventoryManager ! GetInventory()
-      expectMsg(InventoryResponseModel("get inventory", "1", true, 2, ""))
+      expectMsg(InventoryResponseModel(0, "set inventory", "1", true, 5, ""))
+      inventoryManager ! UpdateInventory(1, -3)
+      expectMsg(InventoryResponseModel(1, "buy inventory", "1", true, 3, ""))
+      inventoryManager ! GetInventory(1)
+      expectMsg(InventoryResponseModel(1, "get inventory", "1", true, 2, ""))
     }
   }
 }
