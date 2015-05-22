@@ -2,12 +2,11 @@ package reactive.inventory
 
 import scala.concurrent.Future
 import reactivemongo.core.commands.LastError
-import reactivemongo.bson.{BSONDateTime, BSONDocument}
+import reactivemongo.bson.BSONDocument
 import scala.concurrent.ExecutionContext.Implicits.global
 import reactivemongo.api.collections.default.BSONCollection
 import reactivemongo.api.MongoDriver
 import com.typesafe.config.ConfigFactory
-import java.util.Date
 
 trait MongoRepoLike {
 
@@ -21,7 +20,6 @@ trait MongoRepoLike {
   }
 
   def setInventory(sku: String, count: Int): Future[LastError] = {
-    println(("sku" -> sku, "count" -> count))
     val query = BSONDocument("sku" -> sku)
     val document = BSONDocument("sku" -> sku, "count" -> count)
 

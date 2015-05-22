@@ -12,8 +12,6 @@ import akka.http.scaladsl.marshalling.ToResponseMarshaller
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import spray.json.DefaultJsonProtocol
 import scala.concurrent.ExecutionContextExecutor
-import akka.http.scaladsl.server.{Directives, MissingCookieRejection}
-import akka.http.scaladsl.model.HttpResponse
 
 
 trait Protocols extends DefaultJsonProtocol {

@@ -1,10 +1,6 @@
 package reactive.inventory
 
-import akka.actor.{Props, ActorLogging, ActorRef, Actor}
-import akka.http.scaladsl.model.{HttpMethods, HttpRequest}
-import scala.util.Try
-import play.api.libs.json.{JsValue, Json}
-import java.util.Date
+import akka.actor.{Props, ActorLogging, Actor}
 import reactive.inventory.StatsDSender.{IncrementCounter, SendTimer}
 import reactive.inventory.InventoryManager.InventoryResponse
 
