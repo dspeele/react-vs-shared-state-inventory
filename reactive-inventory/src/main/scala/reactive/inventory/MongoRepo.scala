@@ -8,6 +8,7 @@ import reactivemongo.api.collections.default.BSONCollection
 import reactivemongo.api.MongoDriver
 import com.typesafe.config.ConfigFactory
 
+//Our Mongo repo is completely non-blocking thanks to ReactiveMongo
 trait MongoRepoLike {
 
   val driver = new MongoDriver
@@ -23,14 +24,14 @@ trait MongoRepoLike {
     val query = BSONDocument("sku" -> sku)
     val document = BSONDocument("sku" -> sku, "count" -> count)
 
-    // which returns Future[LastError]
+    //Returns Future[LastError]
     collection.update(query, document, upsert = true)
   }
 
   def findAllInventory(): Future[List[BSONDocument]] = {
     val query = BSONDocument()
 
-    // which returns Future[List[BSONDocument]]
+    //Returns Future[List[BSONDocument]]
     collection.find(query)
       .cursor[BSONDocument]
       .collect[List]()
@@ -39,7 +40,7 @@ trait MongoRepoLike {
   def findInventoryBySku(sku: String): Future[Option[BSONDocument]] = {
     val query = BSONDocument("sku" -> sku)
 
-    // which returns Future[Option[BSONDocument]]
+    //Returns Future[Option[BSONDocument]]
     collection.find(query)
       .one
   }

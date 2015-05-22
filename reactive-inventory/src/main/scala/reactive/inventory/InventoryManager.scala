@@ -3,8 +3,7 @@ package reactive.inventory
 import akka.actor.{Actor, ActorLogging}
 import scala.util.Failure
 
-
-//object that stores message classes for the InventoryManager
+//Object that stores message classes for the InventoryManager
 object InventoryManager {
   case class GetInventory(id: Int)
   case class UpdateInventory(id: Int, quantity: Int)
@@ -21,52 +20,52 @@ with ActorLogging {
 
   implicit val executor = context.dispatcher
 
+  //Persist inventory to Mongo
   def callSetInventory (sku: String, quantity: Int) = {
-    mongoRepo.setInventory(sku, quantity).onComplete(_ match {
-      case Failure(e) => {
-        log.debug("Mongo error: {}", e.getMessage)
+    mongoRepo.setInventory(sku, quantity).onComplete{
+      case Failure(e) =>
+        log.error("Mongo error: {}", e.getMessage)
         throw e
-      }
       case _ =>
-    })
+    }
   }
 
+  //Set initial state of message handler
   def receive = inventory("",0)
 
   def inventory (sku: String, quantity: Int): Receive = {
-    case newMongoRepo: MongoRepoLike => {
+
+    //Change the Mongo db- this is used to switch the EmbeddedMongo db for testing
+    case newMongoRepo: MongoRepoLike =>
       mongoRepo = newMongoRepo
-    }
-    case SetSkuAndQuantity(newSku, newQuantity) => {
+    //Initial message case- set the sku and inventory for this actor and persist to db
+    case SetSkuAndQuantity(newSku, newQuantity) =>
       log.debug("Set quantity = {} for sku = {}", newSku, newQuantity)
       //essentially asynchronous tail recursion! Stateful without var
       context.become(inventory(newSku, newQuantity))
       mongoRepo.setInventory(newSku, newQuantity)
-    }
-    case GetInventory(id) => {
+    //Retrieve the current inventory for this sku
+    case GetInventory(id) =>
       log.debug("Get quantity ({}) for sku = {}", sku, quantity)
-      sender ! InventoryResponse(id, "get inventory", sku, true, quantity, "")
-    }
-    case UpdateInventory(id, modQuantity) => {
+      sender ! InventoryResponse(id, "get inventory", sku, success = true, quantity, "")
+    //Update the inventory for this sku, persist to db, use tail recursive call to save state inside message handler
+    case UpdateInventory(id, modQuantity) =>
       log.debug("Update quantity by {} for sku = {}", sku, modQuantity)
       modQuantity >= 0 match {
-        case true => {
+        case true =>
           context.become(inventory(sku, quantity + modQuantity))
-          sender ! InventoryResponse(id, "add inventory", sku, true, modQuantity, "")
+          sender ! InventoryResponse(id, "add inventory", sku, success = true, modQuantity, "")
           callSetInventory(sku, quantity + modQuantity)
-        }
-        case _ => {
+        case _ =>
           val absModQuantity = modQuantity * -1
           quantity >= absModQuantity match {
-            case true => {
+            case true =>
               context.become(inventory(sku, quantity + modQuantity))
-              sender ! InventoryResponse(id, "buy inventory", sku, true, absModQuantity, "")
+              sender ! InventoryResponse(id, "buy inventory", sku, success = true, absModQuantity, "")
               callSetInventory(sku, quantity + modQuantity)
-            }
-            case _ => sender ! InventoryResponse(id, "buy inventory", sku, false, absModQuantity, s"Only $quantity left")
+            //Don't allow user to reserve more than we have on hand.
+            case _ => sender ! InventoryResponse(id, "buy inventory", sku, success = false, absModQuantity, s"Only $quantity left")
           }
-        }
       }
-    }
   }
 }
