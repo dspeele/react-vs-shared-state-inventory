@@ -13,7 +13,6 @@ libraryDependencies ++= {
   val reactiveMongoVersion = "0.10.5.0.akka23"
   val playVersion = "2.3.0"
   val asyncVersion = "0.9.2"
-  val fongoVersion = "1.6.2"
   val testEmbedMongoVersion = "0.2.2"
   Seq(
     "com.typesafe.akka" % "akka-actor_2.11" % akkaVersion,
@@ -21,6 +20,8 @@ libraryDependencies ++= {
     "com.typesafe.akka" % "akka-stream-experimental_2.11" % akkaStreamVersion,
     "com.typesafe.akka" % "akka-http-core-experimental_2.11" % akkaStreamVersion,
     "com.typesafe.akka" % "akka-http-scala-experimental_2.11" % akkaStreamVersion,
+    "com.typesafe.akka" % "akka-http-testkit-scala-experimental_2.11" % akkaStreamVersion,
+    "com.typesafe.akka" % "akka-http-spray-json-experimental_2.11" % akkaStreamVersion,
     "org.reactivemongo" % "reactivemongo_2.11" % reactiveMongoVersion,
     "com.typesafe.play" % "play-iteratees_2.11" % playVersion,
     "org.scala-lang.modules" % "scala-async_2.11" % asyncVersion,

@@ -17,7 +17,7 @@ class StatsDSender extends Actor {
 
   val config = ConfigFactory.load()
 
-  val address = new InetSocketAddress(config.getString("statsd.interface"), config.getInt("statsd.port"))
+  val address = new InetSocketAddress(config.getString("statsd.server"), config.getInt("statsd.port"))
 
   def sendMessage(message: String) = {
     Send(ByteString(message), address)

@@ -1,89 +1,70 @@
 package reactive.inventory
 
 import org.scalatest.{Matchers, WordSpecLike}
-import play.api.test.Helpers._
-import play.api.http.Status
-import integration.reactive.inventory.ReactiveInventoryHelpersSpecLike
-import scala.util.Success
-import scala.util.Failure
-import akka.http.scaladsl.Http
-
+import reactive.inventory.InventoryManager._
+import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.testkit.ScalatestRouteTest
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 
 class ReactiveInventoryServiceSpec extends WordSpecLike
+with ScalatestRouteTest
 with Matchers
-with ReactiveInventoryHelpersSpecLike {
-
-  val reactiveInventoryService = ReactiveInventoryService
-
-  "TestHttp" should {
-    "get response from http" in {
-    }
-  }
+with Service {
 
   "ReactiveInventoryService" should {
     "get inventory value" in {
-      val fakeRequest = generateFakeRequest(GET, "/inventory/1")
-      val result = route(fakeRequest).get
-      statusAndContentTypeCheck(result, Status.OK)
-      convertJsonToInventoryResponseModel(contentAsJson(result)) match {
-        case Success(inventoryResponse) => {
-          inventoryResponse.sku == "1" shouldBe true
-        }
-        case Failure(e) => throw e
+      Get("/inventory/1") ~> routes ~> check {
+        status shouldBe StatusCodes.OK
+        responseAs[InventoryResponse].sku == "1" shouldBe true
       }
     }
 
     "allow purchase of inventory" in {
-      val fakeRequest = generateFakeRequest(PUT, "/inventory/1/1")
-      val result = route(fakeRequest).get
-      statusAndContentTypeCheck(result, Status.OK)
-      convertJsonToInventoryResponseModel(contentAsJson(result)) match {
-        case Success(inventoryResponse) => {
-          inventoryResponse.sku == "1" shouldBe true
-          inventoryResponse.quantity == 1 shouldBe true
-          inventoryResponse.success shouldBe true
-        }
-        case Failure(e) => throw e
+      Put("/inventory/1/-1") ~> routes ~> check {
+        status shouldBe StatusCodes.OK
+        val inventoryResponse: InventoryResponse = responseAs[InventoryResponse]
+        inventoryResponse.sku == "1" shouldBe true
+        inventoryResponse.quantity == 1 shouldBe true
+        inventoryResponse.success shouldBe true
       }
     }
 
     "disallow purchase of more inventory than is available" in {
-      val fakeRequestGet = generateFakeRequest(GET, "/inventory/1")
-      val resultGet = route(fakeRequestGet).get
-      statusAndContentTypeCheck(resultGet, Status.OK)
-      val responseGet = contentAsJson(resultGet)
-      val availableQuantity = (responseGet \ "quantity").asInstanceOf[Int] + 1
-      val fakeRequestPut = generateFakeRequest(PUT, s"/inventory/1/$availableQuantity")
-      val resultPut = route(fakeRequestPut).get
-      statusAndContentTypeCheck(resultPut, Status.OK)
-      convertJsonToInventoryResponseModel(contentAsJson(resultPut)) match {
-        case Success(inventoryResponse) => {
-          inventoryResponse.sku == "1" shouldBe true
-          inventoryResponse.quantity == availableQuantity shouldBe true
-          inventoryResponse.success shouldBe false
-        }
-        case Failure(e) => throw e
+      var moreThanAvailableQuantity = 0
+      Get("/inventory/1") ~> routes ~> check {
+        status shouldBe StatusCodes.OK
+        val inventoryResponse = responseAs[InventoryResponse]
+        moreThanAvailableQuantity = inventoryResponse.quantity + 1
+      }
+      Put(s"/inventory/1/-$moreThanAvailableQuantity") ~> routes ~> check {
+        status shouldBe StatusCodes.OK
+        val inventoryResponse = responseAs[InventoryResponse]
+        inventoryResponse.sku == "1" shouldBe true
+        inventoryResponse.quantity == moreThanAvailableQuantity shouldBe true
+        inventoryResponse.success shouldBe false
       }
     }
 
     "purchase should decrement inventory" in {
-      val fakeRequestGet = generateFakeRequest(GET, "/inventory/1")
-      val resultGet = route(fakeRequestGet).get
-      statusAndContentTypeCheck(resultGet, Status.OK)
-      val responseGet = contentAsJson(resultGet)
-      val availableQuantity = (responseGet \ "quantity").asInstanceOf[Int]
-      val fakeRequestPut = generateFakeRequest(PUT, s"/inventory/1/1")
-      val resultPut = route(fakeRequestPut).get
-      statusAndContentTypeCheck(resultPut, Status.OK)
-      val fakeRequestGetNew = generateFakeRequest(GET, "/inventory/1")
-      val resultGetNew = route(fakeRequestGetNew).get
-      statusAndContentTypeCheck(resultGetNew, Status.OK)
-      convertJsonToInventoryResponseModel(contentAsJson(resultGetNew)) match {
-        case Success(inventoryResponse) => {
-          inventoryResponse.quantity == availableQuantity-1 shouldBe true
-        }
-        case Failure(e) => throw e
+      var availableQuantity = 0
+      Get("/inventory/1") ~> routes ~> check {
+        status shouldBe StatusCodes.OK
+        val inventoryResponse = responseAs[InventoryResponse]
+        availableQuantity = inventoryResponse.quantity
       }
+      Put(s"/inventory/1/-1") ~> routes ~> check {
+        status shouldBe StatusCodes.OK
+        val inventoryResponse = responseAs[InventoryResponse]
+        inventoryResponse.sku == "1" shouldBe true
+        inventoryResponse.quantity == 1 shouldBe true
+        inventoryResponse.success shouldBe true
+      }
+      Get("/inventory/1") ~> routes ~> check {
+        status shouldBe StatusCodes.OK
+        val inventoryResponse = responseAs[InventoryResponse]
+        availableQuantity == (inventoryResponse.quantity + 1) shouldBe true
+      }
+      Thread.sleep(1000) //we need this to allow database connections to finish
     }
   }
 }
