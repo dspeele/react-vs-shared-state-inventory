@@ -1,0 +1,8 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Index page
+GET     /shared-state-inventory/:sku              controllers.Application.getInventory(sku: String)
+PUT     /shared-state-inventory/:sku/:quantity    controllers.Application.updateInventory(sku: String, quantity: Int)
+

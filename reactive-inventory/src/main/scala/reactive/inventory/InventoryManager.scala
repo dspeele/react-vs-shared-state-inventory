@@ -47,24 +47,24 @@ with ActorLogging {
     //Retrieve the current inventory for this sku
     case GetInventory(id) =>
       log.debug("Get quantity ({}) for sku = {}", sku, quantity)
-      sender ! InventoryResponse(id, "get inventory", sku, success = true, quantity, "")
+      sender ! InventoryResponse(id, "get", sku, success = true, quantity, "")
     //Update the inventory for this sku, persist to db, use tail recursive call to save state inside message handler
     case UpdateInventory(id, modQuantity) =>
       log.debug("Update quantity by {} for sku = {}", sku, modQuantity)
       modQuantity >= 0 match {
         case true =>
           context.become(inventory(sku, quantity + modQuantity))
-          sender ! InventoryResponse(id, "add inventory", sku, success = true, modQuantity, "")
+          sender ! InventoryResponse(id, "update", sku, success = true, modQuantity, "")
           callSetInventory(sku, quantity + modQuantity)
         case _ =>
           val absModQuantity = modQuantity * -1
           quantity >= absModQuantity match {
             case true =>
               context.become(inventory(sku, quantity + modQuantity))
-              sender ! InventoryResponse(id, "buy inventory", sku, success = true, absModQuantity, "")
+              sender ! InventoryResponse(id, "update", sku, success = true, modQuantity, "")
               callSetInventory(sku, quantity + modQuantity)
             //Don't allow user to reserve more than we have on hand.
-            case _ => sender ! InventoryResponse(id, "buy inventory", sku, success = false, absModQuantity, s"Only $quantity left")
+            case _ => sender ! InventoryResponse(id, "update", sku, success = false, modQuantity, s"Only $quantity left")
           }
       }
   }

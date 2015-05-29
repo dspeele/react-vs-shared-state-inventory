@@ -29,6 +29,9 @@ class Receptionist extends Actor
   def handleRequests(requests: Map[Int, (InventoryResponse => Unit, Long)], nextKey: Int): Receive = {
     case GetRequest (sku, completer) =>
       //Send the get request to the appropriate actor
+      //The way we do this is by looking up the name of the actor.
+      //In this case we have named every actor after its sku so we just append
+      //the sku to the base path and voila
       context.actorSelection("/user/" + sku) ! GetInventory(nextKey)
       //Add request to map and increment id
       //This is done essentially via tail recursion
@@ -43,8 +46,8 @@ class Receptionist extends Actor
           //Send response to appropriate request
           completer(InventoryResponse(id, action, sku, success, quantity, message))
           //Send message to actor to record metrics
-          statsDSender ! SendTimer("reactive.duration", System.currentTimeMillis - startTime)
-          statsDSender ! IncrementCounter("reactive.count")
+          statsDSender ! SendTimer(s"reactive.$action.duration", System.currentTimeMillis - startTime)
+          statsDSender ! IncrementCounter(s"reactive.$action.count")
           //Remove request from map, again via tail recursion
           context.become(handleRequests(requests - id, nextKey))
         case _ =>

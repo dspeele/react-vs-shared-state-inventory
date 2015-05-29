@@ -19,53 +19,53 @@ with BeforeAndAfterAll {
 
   "ReactiveInventoryService" should {
     "get inventory value" in {
-      Get("/inventory/1") ~> routes ~> check {
+      Get("/reactive-inventory/1") ~> routes ~> check {
         status shouldBe StatusCodes.OK
         responseAs[InventoryResponse].sku == "1" shouldBe true
       }
     }
 
     "allow purchase of inventory" in {
-      Put("/inventory/1/-1") ~> routes ~> check {
+      Put("/reactive-inventory/1/-1") ~> routes ~> check {
         status shouldBe StatusCodes.OK
         val inventoryResponse: InventoryResponse = responseAs[InventoryResponse]
         inventoryResponse.sku == "1" shouldBe true
-        inventoryResponse.quantity == 1 shouldBe true
+        inventoryResponse.quantity == -1 shouldBe true
         inventoryResponse.success shouldBe true
       }
     }
 
     "disallow purchase of more inventory than is available" in {
       var moreThanAvailableQuantity = 0
-      Get("/inventory/1") ~> routes ~> check {
+      Get("/reactive-inventory/1") ~> routes ~> check {
         status shouldBe StatusCodes.OK
         val inventoryResponse = responseAs[InventoryResponse]
         moreThanAvailableQuantity = inventoryResponse.quantity + 1
       }
-      Put(s"/inventory/1/-$moreThanAvailableQuantity") ~> routes ~> check {
+      Put(s"/reactive-inventory/1/-$moreThanAvailableQuantity") ~> routes ~> check {
         status shouldBe StatusCodes.OK
         val inventoryResponse = responseAs[InventoryResponse]
         inventoryResponse.sku == "1" shouldBe true
-        inventoryResponse.quantity == moreThanAvailableQuantity shouldBe true
+        inventoryResponse.quantity == -moreThanAvailableQuantity shouldBe true
         inventoryResponse.success shouldBe false
       }
     }
 
     "purchase should decrement inventory" in {
       var availableQuantity = 0
-      Get("/inventory/1") ~> routes ~> check {
+      Get("/reactive-inventory/1") ~> routes ~> check {
         status shouldBe StatusCodes.OK
         val inventoryResponse = responseAs[InventoryResponse]
         availableQuantity = inventoryResponse.quantity
       }
-      Put(s"/inventory/1/-1") ~> routes ~> check {
+      Put(s"/reactive-inventory/1/-1") ~> routes ~> check {
         status shouldBe StatusCodes.OK
         val inventoryResponse = responseAs[InventoryResponse]
         inventoryResponse.sku == "1" shouldBe true
-        inventoryResponse.quantity == 1 shouldBe true
+        inventoryResponse.quantity == -1 shouldBe true
         inventoryResponse.success shouldBe true
       }
-      Get("/inventory/1") ~> routes ~> check {
+      Get("/reactive-inventory/1") ~> routes ~> check {
         status shouldBe StatusCodes.OK
         val inventoryResponse = responseAs[InventoryResponse]
         availableQuantity == (inventoryResponse.quantity + 1) shouldBe true
