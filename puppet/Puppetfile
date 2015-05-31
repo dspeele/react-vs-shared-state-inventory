@@ -4,7 +4,6 @@
 forge "https://forgeapi.puppetlabs.com"
 mod 'willdurand-nodejs'
 mod 'puppetlabs-mongodb'
-mod 'garethr-scala'
 mod 'jdowning-statsd'
 mod 'dwerder-graphite'
 
