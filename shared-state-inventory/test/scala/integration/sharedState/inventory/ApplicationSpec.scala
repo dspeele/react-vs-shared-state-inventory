@@ -26,6 +26,11 @@ with MongoRepoLike {
       route(FakeRequest(GET, "/boom")) shouldBe None
     }
 
+    "render the index page" in {
+      val index = route(FakeRequest(GET, "/shared-state-inventory")).get
+      status(index) shouldBe OK
+    }
+
     "allow retrieval of inventory" in {
       val response = route(FakeRequest(GET, "/shared-state-inventory/1")).get
 
@@ -48,12 +53,12 @@ with MongoRepoLike {
       contentType(response).get == "application/json" shouldBe true
       val contentJson = contentAsJson(response)
       (contentJson \ "sku").as[String] == "1" shouldBe true
-      (contentJson \ "quantity").as[Int] == 1 shouldBe true
+      (contentJson \ "quantity").as[Int] == -1 shouldBe true
       (contentJson \ "success").as[Boolean] shouldBe true
     }
 
     "disallow purchase of more inventory than is available" in {
-      val getResponse = route(FakeRequest(GET, "/shared-state-inventory/-1")).get
+      val getResponse = route(FakeRequest(GET, "/shared-state-inventory/1")).get
       status(getResponse) shouldBe OK
       val moreThanAvailableQuantity = (contentAsJson(getResponse) \ "quantity").as[Int] + 1
 
@@ -67,7 +72,7 @@ with MongoRepoLike {
     }
 
     "purchase should decrement inventory" in {
-      val getResponse = route(FakeRequest(GET, "/shared-state-inventory/-1")).get
+      val getResponse = route(FakeRequest(GET, "/shared-state-inventory/1")).get
       status(getResponse) shouldBe OK
       val availableQuantity = (contentAsJson(getResponse) \ "quantity").as[Int]
 
@@ -77,9 +82,9 @@ with MongoRepoLike {
       val contentJson = contentAsJson(putResponse)
       (contentJson \ "sku").as[String] == "1" shouldBe true
       (contentJson \ "quantity").as[Int] == -1 shouldBe true
-      (contentJson \ "success").as[Boolean] shouldBe false
+      (contentJson \ "success").as[Boolean] shouldBe true
 
-      val getResponse2 = route(FakeRequest(GET, "/shared-state-inventory/-1")).get
+      val getResponse2 = route(FakeRequest(GET, "/shared-state-inventory/1")).get
       status(getResponse2) shouldBe OK
       (contentAsJson(getResponse2) \ "quantity").as[Int] == (availableQuantity - 1) shouldBe true
       Thread.sleep(1000) //we need this to allow database connections to finish

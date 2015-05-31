@@ -21,9 +21,18 @@ FORGE
       maestrodev-wget (>= 1.2.0)
       puppetlabs-stdlib (>= 3.2.1)
 
+GIT
+  remote: git@github.com:dspeele/hbcd-sbtubuntu.git
+  ref: v1.0.0
+  sha: 6bb16d2ae5fdae8d02187c5ede958d49ca126b7d
+  specs:
+    hbcd-sbtubuntu (0.1.0)
+      puppetlabs-stdlib (>= 1.0.0)
+
 DEPENDENCIES
   dwerder-graphite (>= 0)
   garethr-scala (>= 0)
+  hbcd-sbtubuntu (>= 0)
   jdowning-statsd (>= 0)
   puppetlabs-mongodb (>= 0)
   willdurand-nodejs (>= 0)

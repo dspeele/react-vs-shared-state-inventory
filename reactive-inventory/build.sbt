@@ -15,20 +15,20 @@ libraryDependencies ++= {
   val asyncVersion = "0.9.2"
   val testEmbedMongoVersion = "0.2.2"
   Seq(
-    "com.typesafe.akka" % "akka-actor_2.11" % akkaVersion,
-    "com.typesafe.akka" % "akka-testkit_2.11" % akkaVersion,
-    "com.typesafe.akka" % "akka-stream-experimental_2.11" % akkaStreamVersion,
-    "com.typesafe.akka" % "akka-http-core-experimental_2.11" % akkaStreamVersion,
-    "com.typesafe.akka" % "akka-http-scala-experimental_2.11" % akkaStreamVersion,
-    "com.typesafe.akka" % "akka-http-testkit-scala-experimental_2.11" % akkaStreamVersion,
-    "com.typesafe.akka" % "akka-http-spray-json-experimental_2.11" % akkaStreamVersion,
-    "org.reactivemongo" % "reactivemongo_2.11" % reactiveMongoVersion,
-    "com.typesafe.play" % "play-iteratees_2.11" % playVersion,
-    "org.scala-lang.modules" % "scala-async_2.11" % asyncVersion,
-    "org.scalatest" % "scalatest_2.11" % scalaTestVersion,
-    "com.typesafe.play" % "play-test_2.11" % playVersion,
-    "com.typesafe.play" % "play_2.11" % playVersion,
-    "com.typesafe.play" % "play-json_2.11" % playVersion,
-    "com.github.simplyscala" % "scalatest-embedmongo_2.11" % testEmbedMongoVersion
+    "com.typesafe.akka" %% "akka-actor" % akkaVersion,
+    "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
+    "com.typesafe.akka" %% "akka-stream-experimental" % akkaStreamVersion,
+    "com.typesafe.akka" %% "akka-http-core-experimental" % akkaStreamVersion,
+    "com.typesafe.akka" %% "akka-http-scala-experimental" % akkaStreamVersion,
+    "com.typesafe.akka" %% "akka-http-testkit-scala-experimental" % akkaStreamVersion,
+    "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaStreamVersion,
+    "org.reactivemongo" %% "reactivemongo" % reactiveMongoVersion,
+    "com.typesafe.play" %% "play-iteratees" % playVersion,
+    "org.scala-lang.modules" %% "scala-async" % asyncVersion,
+    "org.scalatest" %% "scalatest" % scalaTestVersion,
+    "com.typesafe.play" %% "play-test" % playVersion,
+    "com.typesafe.play" %% "play" % playVersion,
+    "com.typesafe.play" %% "play-json" % playVersion,
+    "com.github.simplyscala" %% "scalatest-embedmongo" % testEmbedMongoVersion
   )
 }
