@@ -69,7 +69,7 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get install -y apache2
   # SHELL
   #
-  config.puppet_install.puppet_version = "3.7.4"
+  config.puppet_install.puppet_version = :latest
 
   config.librarian_puppet.puppetfile_dir = "puppet"
   config.librarian_puppet.placeholder_filename = ".gitkeep"

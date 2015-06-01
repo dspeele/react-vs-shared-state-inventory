@@ -8,3 +8,6 @@ mod 'garethr-scala'
 mod 'jdowning-statsd'
 mod 'dwerder-graphite'
 
+mod 'hbcd-sbtubuntu',
+  :git => 'git@github.com:dspeele/hbcd-sbtubuntu.git',
+  :ref  => 'v1.0.0'
