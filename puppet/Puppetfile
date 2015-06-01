@@ -6,6 +6,7 @@ mod 'willdurand-nodejs'
 mod 'puppetlabs-mongodb'
 mod 'jdowning-statsd'
 mod 'dwerder-graphite'
+mod 'puppetlabs-java'
 
 mod 'hbcd-sbtubuntu',
   :git => 'git@github.com:dspeele/hbcd-sbtubuntu.git',

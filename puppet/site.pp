@@ -1,5 +1,9 @@
 include 'sbtubuntu'
 
+include class { 'java':
+    package => 'openjdk-8-jdk'
+}
+
 class { 'nodejs':
     version => 'latest',
 }
