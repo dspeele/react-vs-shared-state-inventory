@@ -29,7 +29,7 @@ class InventoryManagerSpec extends TestKit(ActorSystem("InventoryManagerSpec"))
       Await.result(collection.save(document), 5 seconds)
       inventoryManager ! SetSkuAndQuantity("1", 5)
       inventoryManager ! GetInventory(1)
-      expectMsg(InventoryResponse(1, "get inventory", "1", success = true, 5, ""))
+      expectMsg(InventoryResponse(1, "get", "1", success = true, 5, ""))
     }
 
     "remove inventory for Sku when purchased" in {
@@ -39,7 +39,7 @@ class InventoryManagerSpec extends TestKit(ActorSystem("InventoryManagerSpec"))
       Await.result(collection.save(document), 5 seconds)
       inventoryManager ! SetSkuAndQuantity("1", 5)
       inventoryManager ! UpdateInventory(1, -3)
-      expectMsg(InventoryResponse(1, "buy inventory", "1", success = true, -3, ""))
+      expectMsg(InventoryResponse(1, "update", "1", success = true, -3, ""))
     }
 
     "return appropriate failure message for Sku when too many purchased" in {
@@ -49,7 +49,7 @@ class InventoryManagerSpec extends TestKit(ActorSystem("InventoryManagerSpec"))
       Await.result(collection.save(document), 5 seconds)
       inventoryManager ! SetSkuAndQuantity("1", 5)
       inventoryManager ! UpdateInventory(1, -6)
-      expectMsg(InventoryResponse(1, "buy inventory", "1", success = false, -6, "Only 5 left"))
+      expectMsg(InventoryResponse(1, "update", "1", success = false, -6, "Only 5 left"))
     }
 
     "add inventory for Sku" in {
@@ -59,7 +59,7 @@ class InventoryManagerSpec extends TestKit(ActorSystem("InventoryManagerSpec"))
       Await.result(collection.save(document), 5 seconds)
       inventoryManager ! SetSkuAndQuantity("1", 5)
       inventoryManager ! UpdateInventory(1, 2)
-      expectMsg(InventoryResponse(1, "add inventory", "1", success = true, 2, ""))
+      expectMsg(InventoryResponse(1, "update", "1", success = true, 2, ""))
     }
 
     "removing inventory for Sku should decrement inventory" in {
@@ -69,9 +69,9 @@ class InventoryManagerSpec extends TestKit(ActorSystem("InventoryManagerSpec"))
       Await.result(collection.save(document), 5 seconds)
       inventoryManager ! SetSkuAndQuantity("1", 5)
       inventoryManager ! UpdateInventory(1, -3)
-      expectMsg(InventoryResponse(1, "buy inventory", "1", success = true, -3, ""))
+      expectMsg(InventoryResponse(1, "update", "1", success = true, -3, ""))
       inventoryManager ! GetInventory(1)
-      expectMsg(InventoryResponse(1, "get inventory", "1", success = true, 2, ""))
+      expectMsg(InventoryResponse(1, "get", "1", success = true, 2, ""))
     }
   }
 }

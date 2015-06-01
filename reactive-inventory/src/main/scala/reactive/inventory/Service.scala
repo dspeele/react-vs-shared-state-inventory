@@ -34,7 +34,7 @@ trait Service extends Router with Protocols {
 
   val routes =
     get {
-      path("inventory" / Segment) {
+      path("reactive-inventory" / Segment) {
         sku =>
           //Send a callback to complete the response for this request to a Receptionist
           completeWith[InventoryResponse](implicitly[ToResponseMarshaller[InventoryResponse]]) {
@@ -44,7 +44,7 @@ trait Service extends Router with Protocols {
       }
     } ~
       put {
-        path("inventory" / Segment / Segment) {
+        path("reactive-inventory" / Segment / Segment) {
           (sku, quantity) =>
             //Send a callback to complete the response for this request to a Receptionist
             completeWith[InventoryResponse](implicitly[ToResponseMarshaller[InventoryResponse]]) {
