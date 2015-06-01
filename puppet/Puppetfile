@@ -2,13 +2,9 @@
 #^syntax detection
 
 forge "https://forgeapi.puppetlabs.com"
-mod 'willdurand-nodejs'
 mod 'puppetlabs-mongodb'
 mod 'puppetlabs-java'
-mod 'jdowning-statsd'
-mod 'dwerder-graphite'
-mod 'puppetlabs-apache'
-
+mod 'garethr-docker'
 mod 'hbcd-sbtubuntu',
   :git => 'git@github.com:dspeele/hbcd-sbtubuntu.git',
   :ref  => 'v1.0.0'
