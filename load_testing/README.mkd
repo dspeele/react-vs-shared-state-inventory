@@ -1,0 +1,11 @@
+#Running Load Tests
+
+##Instructions
+
+- Download Jmeter
+  - http://jmeter.apache.org/download_jmeter.cgi
+- Open jmeter
+  - [jmeter dir]/bin/jmeter
+- Open jmeter **Test Plan** file called **Load-Testing-Inventory.jmx** under **load_testing** dir
+- Click at "Results" icon under "Inventory" thread group and click at the "Play" icon from the toolbox menu
+
