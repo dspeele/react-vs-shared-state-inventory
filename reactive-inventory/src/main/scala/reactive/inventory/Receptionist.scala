@@ -1,7 +1,6 @@
 package reactive.inventory
 
 import akka.actor.{Props, ActorLogging, Actor}
-import reactive.inventory.StatsDSender.{IncrementCounter, SendTimer}
 import reactive.inventory.InventoryManager.InventoryResponse
 
 object Receptionist {
@@ -17,9 +16,9 @@ class Receptionist extends Actor
 
   import InventoryManager._
   import Receptionist._
+  import StatsDSender._
 
-  //Actor to send metrics
-  val statsDSender = context.actorOf(Props[StatsDSender])
+  val statsDSender = context.actorSelection("/user/StatsDSender")
 
   //Initialize state of actor's message handler
   //We store a map of ids to outstanding requests (along with start time for metric)

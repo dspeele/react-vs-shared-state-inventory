@@ -1,10 +1,10 @@
 package metrics
 
 import akka.actor.Actor
-import akka.io.Udp.Send
-import akka.util.ByteString
 import com.typesafe.config.ConfigFactory
-import java.net.InetSocketAddress
+import java.net.{InetSocketAddress, InetAddress}
+import java.nio.ByteBuffer
+import java.nio.channels.DatagramChannel
 
 object StatsDSender {
   case class IncrementCounter (bucket: String)
@@ -15,16 +15,23 @@ class StatsDSender extends Actor {
 
   import StatsDSender._
 
+  val sendBuffer = ByteBuffer.allocate(1024)
   val config = ConfigFactory.load()
+  val address = new InetSocketAddress(InetAddress.getByName(config.getString("statsd.server")), config.getInt("statsd.port"))
+  val channel = DatagramChannel.open()
 
-  val address = new InetSocketAddress(config.getString("statsd.server"), config.getInt("statsd.port"))
-
-  def sendMessage(message: String) = {
-    Send(ByteString(message), address)
+  def send(message: String) = {
+    sendBuffer.put(message.getBytes("utf-8"))
+    sendBuffer.flip()
+    channel.send(sendBuffer, address)
+    sendBuffer.limit(sendBuffer.capacity())
+    sendBuffer.rewind()
   }
 
   def receive = {
-    case SendTimer (bucket, value) => sendMessage(s"$bucket:$value|ms")
-    case IncrementCounter (bucket) => sendMessage(s"$bucket:1|c")
+    case SendTimer (bucket, value) =>
+      send(s"$bucket:$value|ms")
+    case IncrementCounter (bucket) =>
+      send(s"$bucket:1|c")
   }
 }
