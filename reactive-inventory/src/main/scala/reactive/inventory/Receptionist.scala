@@ -1,6 +1,6 @@
 package reactive.inventory
 
-import akka.actor.{Props, ActorLogging, Actor}
+import akka.actor.{ActorRef, Props, ActorLogging, Actor}
 import reactive.inventory.InventoryManager.InventoryResponse
 
 object Receptionist {
@@ -10,7 +10,7 @@ object Receptionist {
   case class PutRequest(sku: String, quantity: Int, completer: InventoryResponse => Unit) extends Request
 }
 
-class Receptionist extends Actor
+class Receptionist(inventoryManager: Map[String, ActorRef]) extends Actor
   with ActorLogging
   with Router {
 
@@ -28,16 +28,13 @@ class Receptionist extends Actor
   def handleRequests(requests: Map[Int, (InventoryResponse => Unit, Long)], nextKey: Int): Receive = {
     case GetRequest (sku, completer) =>
       //Send the get request to the appropriate actor
-      //The way we do this is by looking up the name of the actor.
-      //In this case we have named every actor after its sku so we just append
-      //the sku to the base path and voila
-      context.actorSelection("/user/" + sku) ! GetInventory(nextKey)
+      inventoryManager.getOrElse(sku, context.system.deadLetters) ! GetInventory(nextKey)
       //Add request to map and increment id
       //This is done essentially via tail recursion
       context.become(handleRequests(requests + (nextKey -> (completer, System.currentTimeMillis)), nextKey + 1))
     case PutRequest (sku, quantity, completer) =>
       //Ditto above
-      context.actorSelection("/user/" + sku) ! UpdateInventory(nextKey, quantity)
+      inventoryManager.getOrElse(sku, context.system.deadLetters) ! UpdateInventory(nextKey, quantity)
       context.become(handleRequests(requests + (nextKey -> (completer, System.currentTimeMillis)), nextKey + 1))
     case InventoryResponse(id, action, sku, success, quantity, message) =>
       requests.get(id) match {

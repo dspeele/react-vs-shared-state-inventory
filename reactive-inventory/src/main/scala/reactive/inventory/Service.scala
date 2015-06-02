@@ -21,12 +21,11 @@ trait Service extends Router with Protocols {
 
   val r = scala.util.Random
 
-  //initialize inventory randomly by creating an Inventory manager for each sku and
-  //sending it a message to assign inventory and sku
-  def initializeManagers() = for (sku <- 1 until 100) {
-    val inventoryManager = system.actorOf(Props[InventoryManager], sku.toString)
-    inventoryManager ! SetSkuAndQuantity(sku.toString, r.nextInt(1000) + 10)
-  }
+  //initialize inventory randomly by creating an Inventory manager for each sku
+  lazy val inventoryManagers: Map[String, ActorRef] =
+    (for (sku <- 1 to 100) yield
+      sku.toString -> system.actorOf(
+        Props(InventoryManager.getClass,sku.toString, r.nextInt(1000) + 10, MongoRepo), sku.toString)).toMap
 
   //Actor to send metrics
   def initializeMetrics() = {
@@ -34,8 +33,8 @@ trait Service extends Router with Protocols {
   }
 
   //create pool of 100 Receptionists to handle incoming requests with SupervisorStrategy from mixed in Router trait
-  lazy val receptionistRouter: ActorRef = system.actorOf(RoundRobinPool(100, supervisorStrategy = oneForOneSupervisorStrategy).props(
-    routeeProps = Props[Receptionist]))
+  lazy val receptionistRouter: ActorRef = system.actorOf(RoundRobinPool(750, supervisorStrategy = oneForOneSupervisorStrategy).props(
+    routeeProps = Props(Receptionist.getClass, inventoryManagers)))
 
   val routes =
     get {

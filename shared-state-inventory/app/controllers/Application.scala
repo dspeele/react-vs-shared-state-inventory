@@ -24,7 +24,7 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller
 
   //initialize inventory randomly by creating an Inventory manager for each sku and
   //sending it a message to assign inventory and sku
-  for (sku <- 1 until 100) {
+  for (sku <- 1 to 100) {
     val quantity = r.nextInt(1000) + 10
     inventory.put(sku.toString, new InventoryQuantity(quantity))
     mongoRepo.setInventory(sku.toString, quantity)
@@ -70,7 +70,6 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller
           }
           case _ =>
         }
-        println("here")
         statsDSender ! SendTimer("shared-state.update.duration", System.currentTimeMillis - startTime)
         statsDSender ! IncrementCounter("shared-state.update.count")
         result
