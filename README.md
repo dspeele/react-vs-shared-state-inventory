@@ -24,3 +24,26 @@
   - Now you can cd reactive-inventory or shared-state-inventory
   - Run sbt- sbt
   - You can run the various commands from within sbt- run, test, compile, clean, gen-idea (to generate idea project)
+
+###Vagrant box
+- Addressable via private network adapter at 192.168.44.22
+- Ubuntu box
+  - Base box- https://atlas.hashicorp.com/ubuntu/boxes/trusty64
+
+###MongoDB for Persistence
+- We are using MongoDB for our database for both apps
+- Installed on our Ubuntu virtual machine via Puppet
+- Puppet module- https://forge.puppetlabs.com/puppetlabs/mongodb
+- Running on port 27017
+- You can log into the mongo db by running mongo from inside the Vagrant box
+- We are also using Embedded MongoDB for some of our tests
+  - https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo
+
+###StatsD/Graphite for Metrics
+- We are using StatsD as an aggregator and Graphite as a metric data store and display vehicle
+- StatsD- https://github.com/etsy/statsd
+- Graphite- http://graphite.readthedocs.org/en/latest/
+- These are installed as a Docker container
+  - https://github.com/hopsoft/docker-graphite-statsd
+- StatsD port is 8125
+- Graphite web gui port is 80
