@@ -8,14 +8,15 @@ import com.typesafe.config.ConfigFactory
 //Start http server
 object ReactiveInventoryService extends App
 with Service {
-  override implicit val system = ActorSystem("ReactiveInventory", ConfigFactory.load().getConfig("ReactiveInventory"))
+
+  val config = ConfigFactory.load()
+
+  override implicit val system = ActorSystem("ReactiveInventory", config.getConfig("ReactiveInventory"))
   override implicit val executor = system.dispatcher
   override implicit val materializer = ActorFlowMaterializer()
 
-  initializeManagers()
   initializeMetrics()
-
-  val config = ConfigFactory.load()
+  initializeManagers()
 
   //Create server binding listening on specified interface and port and bind/handle via route object
   Http().bindAndHandle(routes, config.getString("http.interface"), config.getInt("http.port"))

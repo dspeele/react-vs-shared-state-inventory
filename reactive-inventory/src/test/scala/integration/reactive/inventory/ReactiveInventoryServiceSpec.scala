@@ -1,7 +1,7 @@
 package integration.reactive.inventory
 
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
-import reactive.inventory.InventoryManager._
+import reactive.inventory.InventoryUpdater._
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
@@ -17,11 +17,11 @@ with BeforeAndAfterAll {
 
   //we run into an issue with the first test not completing within the
   //default 1 second so we set an implicit timeout of 5
-  implicit val timeout = RouteTestTimeout(5 second)
+  implicit val routTestTimeout = RouteTestTimeout(5 second)
 
   override def beforeAll() {
-    initializeManagers()
     initializeMetrics()
+    initializeManagers()
   }
 
   "ReactiveInventoryService" should {

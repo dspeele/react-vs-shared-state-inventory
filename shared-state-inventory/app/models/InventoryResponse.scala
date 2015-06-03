@@ -6,7 +6,6 @@ import play.api.libs.json.Reads._
 import play.api.libs.json.Writes._
 
 case class InventoryResponseModel (
-  id: Int,
   action: String,
   sku: String,
   success: Boolean,
@@ -17,7 +16,6 @@ case class InventoryResponseModel (
 trait InventoryResponse {
 
   implicit val readMarketingSignUpJsonObject: Reads[InventoryResponseModel] = (
-    (__ \ "id").read[Int] and
     (__ \ "action").read[String] and
     (__ \ "sku").read[String] and
     (__ \ "success").read[Boolean] and
@@ -26,7 +24,6 @@ trait InventoryResponse {
   )(InventoryResponseModel)
 
   implicit val writeMarketingSignUpModel: Writes[InventoryResponseModel] = (
-    (__ \ "id").write[Int] and
     (__ \ "action").write[String] and
     (__ \ "sku").write[String] and
     (__ \ "success").write[Boolean] and

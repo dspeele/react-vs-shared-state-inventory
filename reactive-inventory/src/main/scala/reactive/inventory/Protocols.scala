@@ -5,5 +5,5 @@ import reactive.inventory.InventoryManager.InventoryResponse
 
 //Json marshaller/unmarshaller
 trait Protocols extends DefaultJsonProtocol {
-  implicit val inventoryResponseFormat = jsonFormat6(InventoryResponse.apply)
+  implicit val inventoryResponseFormat = jsonFormat5(InventoryResponse.apply)
 }
