@@ -13,6 +13,7 @@
   - https://github.com/rvm/rvm#installation
 - Verify Ruby 2.2.1 is set
 - Install Vagrant
+  - http://docs.vagrantup.com/v2/installation/
 - Install Vagrant Puppet-Install plugin
   - vagrant plugin install vagrant-puppet-install 
 - Install Vagrant Librarian-Puppet plugin (version 0.9.0)
@@ -20,7 +21,7 @@
 - Run vagrant up
 - Once this is completed (will take a whiiiiile):
   - vagrant ssh
-  - cd /vagrant (this is where our repo is mounted
+  - cd /vagrant (this is where our repo is mounted)
   - Now you can cd reactive-inventory or shared-state-inventory
   - Run sbt- sbt
   - You can run the various commands from within sbt- run, test, compile, clean, gen-idea (to generate idea project)
