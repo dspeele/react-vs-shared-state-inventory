@@ -1,7 +1,7 @@
 package reactive.inventory
 
 import spray.json.DefaultJsonProtocol
-import reactive.inventory.InventoryManager.InventoryResponse
+import reactive.inventory.InventoryUpdater.InventoryResponse
 
 //Json marshaller/unmarshaller
 trait Protocols extends DefaultJsonProtocol {

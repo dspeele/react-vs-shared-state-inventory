@@ -9,11 +9,8 @@ object EventSource {
 }
 
 trait EventSource {
-  def sendEvent[T](event: T): Unit
-  def eventSourceReceive: Actor.Receive
-}
+    this: Actor =>
 
-trait ProductionEventSource extends EventSource { this: Actor =>
   import EventSource._
   //We're going to use a Vector but many structures would be adequate
   var listeners = Vector.empty[ActorRef]

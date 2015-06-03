@@ -12,8 +12,8 @@ object InventoryUpdater {
 }
 
 class InventoryUpdater(sku: String, var quantity: Int, mongoRepo : MongoRepoLike) extends Actor
-with ActorLogging {
-  this: EventSource =>
+with ActorLogging
+with EventSource {
 
   import InventoryUpdater._
 

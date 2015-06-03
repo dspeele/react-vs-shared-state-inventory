@@ -13,6 +13,7 @@ import akka.util.Timeout
 import scala.concurrent.duration._
 import akka.routing.RoundRobinRouter
 import reactive.inventory.EventSource.RegisterListener
+import scala.language.postfixOps
 
 //Create pool of Receptionist actors to handle requests
 //Create an InventoryUpdater actor for each sku
@@ -33,22 +34,20 @@ trait Service extends Router with Protocols {
     for (sku <- 1 to 25) {
       val quantity = r.nextInt(10000) + 10000
       val skuString = sku.toString
-      inventoryUpdaters.put(sku.toString, system.actorOf(
-        Props(classOf[InventoryUpdater], skuString, quantity, MongoRepo), skuString))
+      val inventoryUpdater = system.actorOf(
+        Props(classOf[InventoryUpdater], skuString, quantity, MongoRepo))
+      inventoryUpdaters.put(sku.toString, inventoryUpdater)
       val inventoryGetterRoutees =
-        for (routeeId <- 1 to 5) yield {
+        for (routeeId <- 1 to 10) yield {
           val routee = system.actorOf(
             Props(classOf[InventoryGetter], skuString, quantity))
-          system.actorSelection("user/" + skuString).resolveOne().onSuccess {
-            case updater => updater ! RegisterListener(routee)
-          }
+          inventoryUpdater ! RegisterListener(routee)
           routee
         }
-
       inventoryGetters.put(
         sku.toString,
         system.actorOf(
-          Props[InventoryGetter].withRouter(
+          Props.empty.withRouter(
             RoundRobinRouter(routees = inventoryGetterRoutees))))
     }
   }
