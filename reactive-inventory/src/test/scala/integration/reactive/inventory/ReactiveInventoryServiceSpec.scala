@@ -21,6 +21,7 @@ with BeforeAndAfterAll {
 
   override def beforeAll() {
     initializeManagers()
+    initializeMetrics()
   }
 
   "ReactiveInventoryService" should {

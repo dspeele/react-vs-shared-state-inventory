@@ -28,6 +28,11 @@ trait Service extends Router with Protocols {
     inventoryManager ! SetSkuAndQuantity(sku.toString, r.nextInt(1000) + 10)
   }
 
+  //Actor to send metrics
+  def initializeMetrics() = {
+    system.actorOf(Props[StatsDSender], "StatsDSender")
+  }
+
   //create pool of 100 Receptionists to handle incoming requests with SupervisorStrategy from mixed in Router trait
   lazy val receptionistRouter: ActorRef = system.actorOf(RoundRobinPool(100, supervisorStrategy = oneForOneSupervisorStrategy).props(
     routeeProps = Props[Receptionist]))

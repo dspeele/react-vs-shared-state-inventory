@@ -13,6 +13,7 @@ with Service {
   override implicit val materializer = ActorFlowMaterializer()
 
   initializeManagers()
+  initializeMetrics()
 
   val config = ConfigFactory.load()
 

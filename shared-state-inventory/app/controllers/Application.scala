@@ -70,6 +70,7 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller
           }
           case _ =>
         }
+        println("here")
         statsDSender ! SendTimer("shared-state.update.duration", System.currentTimeMillis - startTime)
         statsDSender ! IncrementCounter("shared-state.update.count")
         result
