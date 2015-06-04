@@ -133,7 +133,6 @@
     <orderEntry type="library" scope="TEST" name="SBT: org.easytesting:fest-assert:1.4:test" level="project" />
     <orderEntry type="library" scope="TEST" name="SBT: org.easytesting:fest-util:1.1.6:test" level="project" />
     <orderEntry type="library" scope="TEST" name="SBT: org.scalatest:scalatest_2.11:2.2.5:test" level="project" />
-    <orderEntry type="library" name="SBT: com.typesafe.akka:akka-actor_2.11:2.3.10" level="project" />
   </component>
 </module>
 
