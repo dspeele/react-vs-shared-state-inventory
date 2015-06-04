@@ -1,4 +1,4 @@
-package reactive.inventory
+package actors
 
 import akka.actor.{Actor, ActorRef}
 

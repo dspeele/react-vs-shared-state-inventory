@@ -1,23 +1,25 @@
-package reactive.inventory
+package actors
 
-import akka.actor.{Actor, ActorLogging}
-import reactive.inventory.StatsDSender.{IncrementCounter, SendTimer}
-import reactive.inventory.InventoryUpdater.{InventoryUpdate, InventoryResponse}
+import akka.actor.{ActorRef, Actor, ActorLogging}
+import metrics.StatsDSender.{IncrementCounter, SendTimer}
+import models.{InventoryResponse, InventoryResponseModel}
+import actors.InventoryUpdater.InventoryUpdate
+import scala.concurrent.Promise
+import play.api.libs.json.{Json, JsValue}
 
 //Object that stores message classes for the InventoryGetter
 object InventoryGetter {
-  case class GetInventory(startTime: Long, completer: InventoryResponse => Unit)
+  case class GetInventory(startTime: Long, completer: Promise[JsValue])
 }
 
-class InventoryGetter(sku: String, var quantity: Int) extends Actor
-with ActorLogging {
+class InventoryGetter(sku: String, var quantity: Int, statsDSender: ActorRef) extends Actor
+    with ActorLogging
+    with InventoryResponse {
   this: EventSource =>
 
   import InventoryGetter._
 
   implicit val executor = context.dispatcher
-
-  val statsDSender = context.actorSelection("/user/StatsDSender")
 
   //Set initial state of message handler
   def receive = {
@@ -26,7 +28,7 @@ with ActorLogging {
       quantity = newQuantity
     //Retrieve the current inventory for this sku
     case GetInventory(startTime: Long, completer) =>
-      completer(InventoryResponse("get", sku, success = true, quantity, ""))
+      completer.success(Json.toJson(InventoryResponseModel("get", sku, success = true, quantity, "")))
       statsDSender ! SendTimer("reactive.get.duration", System.currentTimeMillis - startTime)
       statsDSender ! IncrementCounter("reactive.get.count")
   }

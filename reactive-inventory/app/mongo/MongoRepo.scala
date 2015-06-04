@@ -1,4 +1,4 @@
-package reactive.inventory
+package mongo
 
 import scala.concurrent.Future
 import reactivemongo.core.commands.LastError

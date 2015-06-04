@@ -1,4 +1,4 @@
-package reactive.inventory
+package metrics
 
 import akka.actor.Actor
 import com.typesafe.config.ConfigFactory

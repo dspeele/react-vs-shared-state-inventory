@@ -16,15 +16,16 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller
     with InventoryResponse {
 
-  val system = ActorSystem("ReactiveInventoryTemplate")
-  val statsDSender = system.actorOf(Props[StatsDSender])
+  val akkaSystem = ActorSystem("reactive-inventory")
+
+  val statsDSender = akkaSystem.actorOf(Props[StatsDSender])
   val inventory = TrieMap[String, InventoryQuantity]()
 
   val r = scala.util.Random
 
   //initialize inventory randomly by creating an Inventory manager for each sku and
   //sending it a message to assign inventory and sku
-  for (sku <- 1 to 25) {
+  for (sku <- 1 to 100) {
     val quantity = r.nextInt(10000) + 10000
     inventory.put(sku.toString, new InventoryQuantity(quantity))
     mongoRepo.setInventory(sku.toString, quantity)

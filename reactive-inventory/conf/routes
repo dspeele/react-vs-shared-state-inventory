@@ -1,0 +1,11 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Index page
+GET     /reactive-inventory                   controllers.Application.index
+
+# Inventory operations
+GET     /reactive-inventory/:sku              controllers.Application.getInventory(sku: String)
+PUT     /reactive-inventory/:sku/:quantity    controllers.Application.updateInventory(sku: String, quantity: Int)
+

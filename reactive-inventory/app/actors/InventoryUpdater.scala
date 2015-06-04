@@ -1,25 +1,28 @@
-package reactive.inventory
+package actors
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{Actor, ActorLogging, ActorRef}
 import scala.util.Failure
-import reactive.inventory.StatsDSender.{IncrementCounter, SendTimer}
+import metrics.StatsDSender.{IncrementCounter, SendTimer}
+import models.{InventoryResponse, InventoryResponseModel}
+import mongo.MongoRepoLike
+import play.api.libs.json.{Json, JsValue}
+import scala.concurrent.Promise
+
 
 //Object that stores message classes for the InventoryUpdater
 object InventoryUpdater {
-  case class UpdateInventory(startTime: Long, quantity: Int, completer: InventoryResponse => Unit)
+  case class UpdateInventory(startTime: Long, quantity: Int, completer: Promise[JsValue])
   case class InventoryUpdate(quantity: Int)
-  case class InventoryResponse(action: String, sku: String, success: Boolean, quantity: Int, message: String)
 }
 
-class InventoryUpdater(sku: String, var quantity: Int, mongoRepo : MongoRepoLike) extends Actor
-with ActorLogging
-with EventSource {
+class InventoryUpdater(sku: String, var quantity: Int, mongoRepo : MongoRepoLike, statsDSender: ActorRef) extends Actor
+    with EventSource
+    with ActorLogging
+    with InventoryResponse{
 
   import InventoryUpdater._
 
   implicit val executor = context.dispatcher
-
-  val statsDSender = context.actorSelection("/user/StatsDSender")
 
   //Persist inventory to Mongo
   def callSetInventory (sku: String, quantity: Int) = {
@@ -46,7 +49,7 @@ with EventSource {
           message = s"Only $quantity left"
           success = false
       }
-      completer(InventoryResponse("update", sku, success = success, modQuantity, message))
+      completer.success(Json.toJson(InventoryResponseModel("update", sku, success = success, modQuantity, message)))
       sendEvent(InventoryUpdate(quantity))
       callSetInventory(sku, quantity + modQuantity)
       statsDSender ! SendTimer("reactive.update.duration", System.currentTimeMillis - startTime)
