@@ -51,7 +51,7 @@ class InventoryUpdater(sku: String, var quantity: Int, mongoRepo : MongoRepoLike
       }
       completer.success(Json.toJson(InventoryResponseModel("update", sku, success = success, modQuantity, message)))
       sendEvent(InventoryUpdate(quantity))
-      callSetInventory(sku, quantity + modQuantity)
+      callSetInventory(sku, quantity)
       statsDSender ! SendTimer("reactive.update.duration", System.currentTimeMillis - startTime)
       statsDSender ! IncrementCounter("reactive.update.count")
   }
