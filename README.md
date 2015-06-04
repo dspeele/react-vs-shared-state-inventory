@@ -48,3 +48,24 @@
   - https://github.com/hopsoft/docker-graphite-statsd
 - StatsD port is 8125
 - Graphite web gui port is 80
+
+###Load Testing
+- We're using JMeter
+- Instructions and Test Plan can be found in load_testing directory
+
+###Useful Links
+- Reactive Mongo
+  - Non-blocking Mongo driver 
+  - http://reactivemongo.org/ 
+- Akka
+  - Actor framework
+  - http://akka.io/
+- Play framework
+  - Web framework built on Akka
+  - https://www.playframework.com/
+- HBC Digital on Twitter
+  - Dynamic, cutting edge technology company with empowered engineers
+  - https://twitter.com/hbcdigital
+- Dana Peele
+  - Application developer
+  - https://twitter.com/Dana_S_Peele
