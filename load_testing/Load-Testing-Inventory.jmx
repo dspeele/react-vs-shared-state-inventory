@@ -15,9 +15,9 @@
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">50</stringProp>
+          <stringProp name="LoopController.loops">5000</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">50</stringProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
         <stringProp name="ThreadGroup.ramp_time">0</stringProp>
         <longProp name="ThreadGroup.start_time">1433178667000</longProp>
         <longProp name="ThreadGroup.end_time">1433178667000</longProp>
@@ -28,7 +28,7 @@
       <hashTree>
         <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="sku_counter" enabled="true">
           <stringProp name="CounterConfig.start">1</stringProp>
-          <stringProp name="CounterConfig.end">25</stringProp>
+          <stringProp name="CounterConfig.end">100</stringProp>
           <stringProp name="CounterConfig.incr">1</stringProp>
           <stringProp name="CounterConfig.name">sku_counter</stringProp>
           <stringProp name="CounterConfig.format"></stringProp>
@@ -69,7 +69,7 @@
           </elementProp>
           <stringProp name="HTTPSampler.domain">192.168.44.22</stringProp>
           <stringProp name="HTTPSampler.port">9001</stringProp>
-          <stringProp name="HTTPSampler.connect_timeout">3000</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
@@ -90,7 +90,7 @@
           </elementProp>
           <stringProp name="HTTPSampler.domain">192.168.44.22</stringProp>
           <stringProp name="HTTPSampler.port">9000</stringProp>
-          <stringProp name="HTTPSampler.connect_timeout">3000</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
@@ -111,7 +111,7 @@
           </elementProp>
           <stringProp name="HTTPSampler.domain">192.168.44.22</stringProp>
           <stringProp name="HTTPSampler.port">9001</stringProp>
-          <stringProp name="HTTPSampler.connect_timeout">3000</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
@@ -132,7 +132,7 @@
           </elementProp>
           <stringProp name="HTTPSampler.domain">192.168.44.22</stringProp>
           <stringProp name="HTTPSampler.port">9000</stringProp>
-          <stringProp name="HTTPSampler.connect_timeout">3000</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">10000</stringProp>
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
