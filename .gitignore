@@ -21,3 +21,6 @@ dist
 puppet/.tmp
 puppet/modules/*
 .vagrant
+shared-state-inventory/*
+reactive-inventory/*
+
