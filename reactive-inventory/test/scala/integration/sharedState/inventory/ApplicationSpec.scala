@@ -14,7 +14,7 @@ with BeforeAndAfterAll
 with MongoRepoLike {
 
   override def beforeAll() = {
-    Play.start(FakeApplication(withGlobal = Some(new controllers.Global)))
+    Play.start(FakeApplication())
   }
 
   override def afterAll() = {
@@ -37,14 +37,6 @@ with MongoRepoLike {
       status(response) shouldBe OK
       contentType(response).get == "application/json" shouldBe true
       (contentAsJson(response) \ "sku").as[String] == "1" shouldBe true
-    }
-
-    "throw 404 on retrieval of nonexistent inventory" in {
-      val response = route(FakeRequest(GET, "/reactive-inventory/-1")).get
-
-      status(response) shouldBe NOT_FOUND
-      contentType(response).get == "application/json" shouldBe true
-      (contentAsJson(response) \ "sku").as[String] == "-1" shouldBe true
     }
 
     "allow purchase of inventory" in {

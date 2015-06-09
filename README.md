@@ -54,6 +54,8 @@
 - Instructions and Test Plan can be found in load_testing directory
 
 ###Useful Links
+- sbt
+  - http://www.scala-sbt.org/
 - Reactive Mongo
   - Non-blocking Mongo driver 
   - http://reactivemongo.org/ 

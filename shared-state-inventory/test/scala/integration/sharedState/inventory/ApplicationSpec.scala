@@ -14,7 +14,7 @@ with BeforeAndAfterAll
 with MongoRepoLike {
 
   override def beforeAll() = {
-    Play.start(FakeApplication(withGlobal = Some(new controllers.Global)))
+    Play.start(FakeApplication())
   }
 
   override def afterAll() = {
