@@ -33,7 +33,7 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller
 
   def index = Action.async ({
     request =>
-      Future(Ok("find-in-store is up and running!"))
+      Future(Ok("Inventory service is up and running!"))
   })
 
   def getInventory(sku: String) = Action.async ({

@@ -6,7 +6,6 @@ import play.api.Play
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.test.FakeApplication
-import scala.Some
 
 class ApplicationSpec extends WordSpec
 with Matchers
