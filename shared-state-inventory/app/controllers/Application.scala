@@ -12,11 +12,12 @@ import metrics.StatsDSender
 import metrics.StatsDSender._
 import play.api.libs.json.Json
 import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Akka
 
 class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller
     with InventoryResponse {
 
-  val akkaSystem = ActorSystem("reactive-inventory")
+  val akkaSystem = Akka.system
 
   val statsDSender = akkaSystem.actorOf(Props[StatsDSender])
   val inventory = TrieMap[String, InventoryQuantity]()
