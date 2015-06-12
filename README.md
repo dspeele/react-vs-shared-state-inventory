@@ -65,6 +65,9 @@
 - Play framework
   - Web framework built on Akka
   - https://www.playframework.com/
+- TrieMap
+  - http://www.scala-lang.org/api/2.11.4/index.html#scala.collection.concurrent.TrieMap 
+  - http://lampwww.epfl.ch/~prokopec/ctries-snapshot.pdf 
 - HBC Digital on Twitter
   - Dynamic, cutting edge technology company with empowered engineers
   - https://twitter.com/hbcdigital
