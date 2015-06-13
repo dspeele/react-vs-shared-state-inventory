@@ -44,14 +44,14 @@ class InventoryUpdater(sku: String, var quantity: Int, mongoRepo : MongoRepoLike
       modQuantity >= 0 || quantity + modQuantity >= 0 match {
         case true =>
           quantity += modQuantity
+          sendEvent(InventoryUpdate(quantity))
+          callSetInventory(sku, quantity)
         case _ =>
           //Don't allow user to reserve more than we have on hand.
           message = s"Only $quantity left"
           success = false
       }
       completer.success(Json.toJson(InventoryResponseModel("update", sku, success = success, modQuantity, message)))
-      sendEvent(InventoryUpdate(quantity))
-      callSetInventory(sku, quantity)
       statsDSender ! SendTimer("reactive.update.duration", System.currentTimeMillis - startTime)
       statsDSender ! IncrementCounter("reactive.update.count")
   }
