@@ -13,6 +13,8 @@ import metrics.StatsDSender._
 import play.api.libs.json.Json
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.concurrent.Akka
+import play.api.Play.current
+
 
 class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller
     with InventoryResponse {
