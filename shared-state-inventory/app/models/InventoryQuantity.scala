@@ -1,19 +1,12 @@
 package models
 
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock
-import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock
-
+import java.util.concurrent.locks.ReentrantLock
 class InventoryQuantity(private var quantity: Int) {
 
-  private val inventoryLock = new ReentrantReadWriteLock()
-  private val readLock = inventoryLock.readLock()
-  private val writeLock = inventoryLock.writeLock()
+  private val writeLock = new ReentrantLock()
+
   def getQuantity() = {
-    readLock.lock()
-    val q = quantity
-    readLock.unlock()
-    q
+    quantity
   }
 
   def updateQuantity(quantityUpdate: Int): (Boolean, Int) = {
