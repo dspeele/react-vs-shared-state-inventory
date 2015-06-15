@@ -1,6 +1,6 @@
 package controllers
 
-import akka.actor.{Props, ActorSystem}
+import akka.actor.Props
 import play.api._
 import play.api.mvc._
 
