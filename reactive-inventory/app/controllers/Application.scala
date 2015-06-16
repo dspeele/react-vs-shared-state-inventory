@@ -61,11 +61,10 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller {
   })
 
   def updateInventory(sku: String, quantityChange: Int) = Action.async ({
-    request =>
-      val startTime = System.currentTimeMillis
-      val completer = Promise[JsValue]
-      inventoryUpdaters.getOrElse(sku,akkaSystem.deadLetters) ! UpdateInventory(System.currentTimeMillis(), quantityChange, completer)
-      completer.future.map(response => Ok(response))
+    val startTime = System.currentTimeMillis
+    val completer = Promise[JsValue]
+    inventoryUpdaters.getOrElse(sku,akkaSystem.deadLetters) ! UpdateInventory(System.currentTimeMillis(), quantityChange, completer)
+    completer.future.map(response => Ok(response))
   })
 }
 
