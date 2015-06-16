@@ -45,17 +45,17 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller
       val f = Future {
         Logger.debug("get inventory called")
         val skuInventoryOption = inventory.get(sku)
-        var result = NotFound(Json.toJson(InventoryResponseModel("get", sku, false, 0, "sku not found")))
+        var result = NotFound(Json.toJson(InventoryResponseModel("get", sku, success = false, 0, "sku not found")))
         skuInventoryOption match {
-          case Some(skuInventory) => result = Ok(Json.toJson(InventoryResponseModel("get", sku, true, skuInventory.getQuantity(), "")))
+          case Some(skuInventory) => result = Ok(Json.toJson(InventoryResponseModel("get", sku, success = true, skuInventory.getQuantity(), "")))
           case _ =>
         }
         result
       }
-      f.onComplete({case _ => {
+      f.onComplete({case _ =>
         statsDSender ! SendTimer("shared-state.get.duration", System.currentTimeMillis - startTime)
         statsDSender ! IncrementCounter("shared-state.get.count")
-      }})
+      })
       f
   })
 
@@ -63,12 +63,11 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller
     request =>
       val startTime = System.currentTimeMillis
       val f = Future {
-        val startTime = System.currentTimeMillis
         Logger.debug("update inventory called")
         val skuInventoryOption = inventory.get(sku)
-        var result = NotFound(Json.toJson(InventoryResponseModel("update", sku, false, 0, "sku not found")))
+        var result = NotFound(Json.toJson(InventoryResponseModel("update", sku, success = false, 0, "sku not found")))
         skuInventoryOption match {
-          case Some(skuInventory) => {
+          case Some(skuInventory) =>
             val response = skuInventory.updateQuantity(quantityChange)
             result = Ok(
               Json.toJson(
@@ -78,16 +77,15 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller
             response._1 match {
               case true => mongoRepo.setInventory(sku.toString, response._2)
               case _ =>
-            }
           }
           case _ =>
         }
         result
       }
-      f.onComplete({case _ => {
+      f.onComplete({case _ =>
         statsDSender ! SendTimer("shared-state.update.duration", System.currentTimeMillis - startTime)
         statsDSender ! IncrementCounter("shared-state.update.count")
-      }})
+      })
       f
   })
 }
