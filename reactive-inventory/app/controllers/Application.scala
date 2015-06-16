@@ -17,6 +17,7 @@ import actors.EventSource.RegisterListener
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import akka.util.Timeout
+import metrics.StatsDSender.{IncrementCounter, SendTimer}
 
 class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller {
 
@@ -37,12 +38,12 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller {
     val quantity = r.nextInt(10000) + 10000
     val skuString = sku.toString
     val inventoryUpdater = akkaSystem.actorOf(
-      Props(classOf[InventoryUpdater], skuString, quantity, MongoRepo, statsDSender))
+      Props(classOf[InventoryUpdater], skuString, quantity, MongoRepo))
     inventoryUpdaters.put(sku.toString, inventoryUpdater)
     val routees: Seq[ActorRef] =
       for (routeeId <- 1 to 10) yield {
         val routee = akkaSystem.actorOf(
-          Props(classOf[InventoryGetter], skuString, quantity, statsDSender))
+          Props(classOf[InventoryGetter], skuString, quantity))
         inventoryUpdater ! RegisterListener(routee)
         routee
       }
@@ -53,15 +54,27 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller {
 
   def index = Action.async ({
     request =>
-      Future(Ok("inventory is up and running!"))
+      Future(Ok("Inventory service is up and running!"))
   })
 
   def getInventory(sku: String) = Action.async ({
-    (inventoryGetters.getOrElse(sku,akkaSystem.deadLetters) ? GetInventory(System.currentTimeMillis())).mapTo[Result]
+    val startTime = System.currentTimeMillis()
+    val f = (inventoryGetters.getOrElse(sku,akkaSystem.deadLetters) ? GetInventory()).mapTo[Result]
+    f.onComplete({case _ =>
+      statsDSender ! SendTimer("reactive.get.duration", System.currentTimeMillis - startTime)
+      statsDSender ! IncrementCounter("reactive.get.count")
+    })
+    f
   })
 
   def updateInventory(sku: String, quantityChange: Int) = Action.async ({
-    (inventoryUpdaters.getOrElse(sku,akkaSystem.deadLetters) ? UpdateInventory(System.currentTimeMillis(), quantityChange)).mapTo[Result]
+    val startTime = System.currentTimeMillis()
+    val f = (inventoryUpdaters.getOrElse(sku,akkaSystem.deadLetters) ? UpdateInventory(quantityChange)).mapTo[Result]
+    f.onComplete({case _ =>
+      statsDSender ! SendTimer("reactive.update.duration", System.currentTimeMillis - startTime)
+      statsDSender ! IncrementCounter("reactive.update.count")
+    })
+    f
   })
 }
 
