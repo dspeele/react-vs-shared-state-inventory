@@ -33,7 +33,7 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller {
 
   implicit val timeout = new Timeout(20 seconds)
 
-  //initialize inventory randomly by creating an Inventory manager for each sku{
+  //initialize inventory randomly by creating an Inventory manager for each sku
   for (sku <- 1 to 100) {
     val quantity = r.nextInt(10000) + 10000
     val skuString = sku.toString

@@ -33,7 +33,6 @@ class InventoryUpdater(sku: String, var quantity: Int, mongoRepo : MongoRepoLike
 
   callSetInventory (sku, quantity)
 
-  //Set initial state of message handler
   def inventoryReceive: Receive = {
     //update inventory
     case UpdateInventory(modQuantity) =>
