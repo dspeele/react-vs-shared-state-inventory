@@ -2,12 +2,11 @@ package controllers
 
 import akka.actor.{Props, ActorSystem, ActorRef}
 import akka.routing.RoundRobinGroup
-import play.api._
 import play.api.mvc._
 
 import mongo.{MongoRepo, MongoRepoLike}
-import scala.concurrent.{Promise, Future}
-import play.api.libs.json.JsValue
+import scala.concurrent.Future
+import akka.pattern.ask
 import actors.InventoryGetter.GetInventory
 import actors.InventoryUpdater.UpdateInventory
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,7 +14,9 @@ import scala.collection.concurrent.TrieMap
 import metrics.StatsDSender
 import actors.{InventoryGetter, InventoryUpdater}
 import actors.EventSource.RegisterListener
-import com.typesafe.config.ConfigFactory
+import scala.concurrent.duration._
+import scala.language.postfixOps
+import akka.util.Timeout
 
 class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller {
 
@@ -28,6 +29,8 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller {
 
   //Actor to send metrics
   val statsDSender = akkaSystem.actorOf(Props[StatsDSender], "StatsDSender")
+
+  implicit val timeout = Timeout(20 millis)
 
   //initialize inventory randomly by creating an Inventory manager for each sku{
   for (sku <- 1 to 100) {
@@ -46,7 +49,13 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller {
     inventoryGetters.put(
       sku.toString,
       akkaSystem.actorOf(RoundRobinGroup(routees.map(_.path.toStringWithoutAddress).toList).props()))
+
+
+
   }
+
+  //make sure Actors are done being created
+  Thread.sleep (10000)
 
   def index = Action.async ({
     request =>
@@ -54,18 +63,12 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller {
   })
 
   def getInventory(sku: String) = Action.async ({
-    val startTime = System.currentTimeMillis
-    val completer = Promise[JsValue]
-    inventoryGetters.getOrElse(sku,akkaSystem.deadLetters) ! GetInventory(System.currentTimeMillis(), completer)
-    completer.future.map(response => Ok(response))
+    val future = inventoryGetters.getOrElse(sku,akkaSystem.deadLetters) ? GetInventory(System.currentTimeMillis())
+    future.mapTo[Result]
   })
 
   def updateInventory(sku: String, quantityChange: Int) = Action.async ({
-    request =>
-      val startTime = System.currentTimeMillis
-      val completer = Promise[JsValue]
-      inventoryUpdaters.getOrElse(sku,akkaSystem.deadLetters) ! UpdateInventory(System.currentTimeMillis(), quantityChange, completer)
-      completer.future.map(response => Ok(response))
+    (inventoryUpdaters.getOrElse(sku,akkaSystem.deadLetters) ? UpdateInventory(System.currentTimeMillis(), quantityChange)).mapTo[Result]
   })
 }
 
