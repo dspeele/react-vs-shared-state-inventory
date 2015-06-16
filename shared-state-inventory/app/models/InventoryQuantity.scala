@@ -1,6 +1,7 @@
 package models
 
 import java.util.concurrent.locks.ReentrantLock
+
 class InventoryQuantity(private var quantity: Int) {
 
   private val writeLock = new ReentrantLock()

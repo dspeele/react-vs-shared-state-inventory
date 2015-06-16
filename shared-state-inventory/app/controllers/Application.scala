@@ -70,7 +70,11 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller
         skuInventoryOption match {
           case Some(skuInventory) => {
             val response = skuInventory.updateQuantity(quantityChange)
-            result = Ok(Json.toJson(InventoryResponseModel("update", sku, response._1, quantityChange, if (!response._1) s"Only ${response._2} left" else "")))
+            result = Ok(
+              Json.toJson(
+                InventoryResponseModel(
+                  "update", sku, success = response._1, quantityChange, if (!response._1) s"Only ${response._2} left" else ""
+            )))
             response._1 match {
               case true => mongoRepo.setInventory(sku.toString, response._2)
               case _ =>
@@ -85,7 +89,6 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller
         statsDSender ! IncrementCounter("shared-state.update.count")
       }})
       f
-
   })
 }
 
