@@ -51,7 +51,6 @@ class InventoryUpdater(sku: String, var quantity: Int, mongoRepo : MongoRepoLike
           message = s"Only $quantity left"
           success = false
       }
-      println(sender)
       sender ! Ok(Json.toJson(InventoryResponseModel("update", sku, success = success, modQuantity, message)))
       statsDSender ! SendTimer("reactive.update.duration", System.currentTimeMillis - startTime)
       statsDSender ! IncrementCounter("reactive.update.count")

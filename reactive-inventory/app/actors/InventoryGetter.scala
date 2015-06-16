@@ -28,7 +28,6 @@ class InventoryGetter(sku: String, var quantity: Int, statsDSender: ActorRef) ex
       quantity = newQuantity
     //Retrieve the current inventory for this sku
     case GetInventory(startTime: Long) =>
-      println(sender)
       sender ! Ok(Json.toJson(InventoryResponseModel("get", sku, success = true, quantity, "")))
       statsDSender ! SendTimer("reactive.get.duration", System.currentTimeMillis - startTime)
       statsDSender ! IncrementCounter("reactive.get.count")

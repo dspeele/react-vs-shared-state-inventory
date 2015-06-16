@@ -30,7 +30,7 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller {
   //Actor to send metrics
   val statsDSender = akkaSystem.actorOf(Props[StatsDSender], "StatsDSender")
 
-  implicit val timeout = Timeout(20 millis)
+  implicit val timeout = new Timeout(20 seconds)
 
   //initialize inventory randomly by creating an Inventory manager for each sku{
   for (sku <- 1 to 100) {
@@ -49,13 +49,7 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller {
     inventoryGetters.put(
       sku.toString,
       akkaSystem.actorOf(RoundRobinGroup(routees.map(_.path.toStringWithoutAddress).toList).props()))
-
-
-
   }
-
-  //make sure Actors are done being created
-  Thread.sleep (10000)
 
   def index = Action.async ({
     request =>
@@ -63,8 +57,7 @@ class ApplicationLike(mongoRepo: MongoRepoLike) extends Controller {
   })
 
   def getInventory(sku: String) = Action.async ({
-    val future = inventoryGetters.getOrElse(sku,akkaSystem.deadLetters) ? GetInventory(System.currentTimeMillis())
-    future.mapTo[Result]
+    (inventoryGetters.getOrElse(sku,akkaSystem.deadLetters) ? GetInventory(System.currentTimeMillis())).mapTo[Result]
   })
 
   def updateInventory(sku: String, quantityChange: Int) = Action.async ({
