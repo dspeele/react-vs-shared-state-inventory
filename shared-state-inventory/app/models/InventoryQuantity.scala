@@ -1,34 +1,26 @@
 package models
 
-/*import java.util.concurrent.atomic.AtomicInteger
+/*import java.util.concurrent.locks.ReentrantLock
 
-class InventoryQuantity(private var initialQuantity: Int) {
-  var quantity: AtomicInteger = new AtomicInteger(initialQuantity)
+class InventoryQuantity(private var quantity: Int) {
+
+  private val writeLock = new ReentrantLock()
 
   def getQuantity() = {
-    quantity.get()
-  }
-
-  def foreverWhile[A](body: => A):Nothing = {
-    body
-    foreverWhile(body)
+    quantity
   }
 
   def updateQuantity(quantityUpdate: Int): (Boolean, Int) = {
-    var currentQuantity = quantity.get()
-    foreverWhile {
-      quantityUpdate >= 0 || currentQuantity + quantityUpdate >= 0 match {
+    var returnValue: (Boolean, Int) = (false, quantity)
+    writeLock.lock()
+      quantityUpdate >= 0 || quantity + quantityUpdate >= 0 match {
         case true =>
-          quantity.compareAndSet(currentQuantity, quantityUpdate) match {
-            case true =>
-              (true, quantity)
-            case _ =>
-          }
+          quantity += quantityUpdate
+          returnValue = (true, quantity)
         case _ =>
-          (false, quantity)
       }
-      currentQuantity = quantity.get()
-    }
+    writeLock.unlock()
+    returnValue
   }
 }*/
 
