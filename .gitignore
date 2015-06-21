@@ -18,3 +18,9 @@ dist
 .DS_Store
 *.sublime-*
 .ensime*
+puppet/.tmp
+puppet/modules/*
+.vagrant
+shared-state-inventory/*
+reactive-inventory/*
+

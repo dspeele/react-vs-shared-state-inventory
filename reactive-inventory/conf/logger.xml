@@ -3,7 +3,7 @@
     <conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel" />
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${application.home}/logs/shared-state.log</file>
+        <file>${application.home}/logs/reactive.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>

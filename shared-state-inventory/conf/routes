@@ -3,6 +3,9 @@
 # ~~~~
 
 # Index page
+GET     /shared-state-inventory                   controllers.Application.index
+
+# Inventory operations
 GET     /shared-state-inventory/:sku              controllers.Application.getInventory(sku: String)
 PUT     /shared-state-inventory/:sku/:quantity    controllers.Application.updateInventory(sku: String, quantity: Int)
 

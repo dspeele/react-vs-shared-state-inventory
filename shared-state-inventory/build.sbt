@@ -1,21 +1,21 @@
 import play.PlayScala
 
-name := """hbc-microservice-template"""
+name := "shared-state-inventory"
 
 version := "1.0-SNAPSHOT"
 
+resolvers += "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
+
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.11.1"
-
-resolvers += "Saks Artifactory - Release" at "http://repo.saksdirect.com:8081/artifactory/libs-release"
+scalaVersion := "2.11.5"
 
 libraryDependencies ++= {
   val scalaTestVersion = "2.2.5"
+  val reactiveMongoVersion = "0.10.5.0.akka23"
   Seq(
-    "org.scalatest" %% "scalatest" % scalaTestVersion % "test"
+    "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
+    "org.reactivemongo" %% "reactivemongo" % reactiveMongoVersion
   )
 }
-
-net.virtualvoid.sbt.graph.Plugin.graphSettings
 
